@@ -1,6 +1,52 @@
 import React, { Component } from 'react';
 import './App.css';
 
+/*
+class GuestFName extends Component {
+  handleClick = (e) => {
+    var input;
+    e.preventDefault();
+    input = this.refs.create.value;
+    this.props.onSubmit(input);
+
+  }
+
+  render() {
+    return(
+      <form>
+        <input ref="create" className="search" placeholder="Create guest..."/>
+        <button onClick={this.handleClick}>Create</button>
+      </form>
+    );
+  }
+};
+*/
+
+class CreateGuest extends Component {
+  handleClick = (e) => {
+    var fname;
+    var lname;
+    var email;
+    e.preventDefault();
+    fname = this.refs.fname.value;
+    lname = this.refs.lname.value;
+    email = this.refs.email.value;
+    this.props.onSubmit(fname,lname,email);
+  }
+
+  render() {
+    return(
+      /*<GuestFName onSubmit={this.props.onSubmit}/>*/
+      <form className="input_form">
+        <input ref="fname" className="input_bar" placeholder="First Name"/>
+        <input ref="lname" className="input_bar" placeholder="Last Name"/>
+        <input ref="email" className="input_bar" placeholder="Email"/>
+        <button className="submit" onClick={this.handleClick}>Submit</button>
+      </form>
+    );
+  }
+};
+
 class Searchbar extends Component {
   handleChange = (e) => {
     var input;
@@ -12,12 +58,12 @@ class Searchbar extends Component {
   render() {
     return (
       <form>
-        <input ref="srch" type="search" className="search" placeholder="Type guest name..." onChange={this.handleChange}/>
+        <input ref="srch" type="search" className="search" placeholder="Search guests..." onChange={this.handleChange}/>
           {/*<button onClick={this.handleClick}>Search</button>*/}
       </form>
     );
   }
-}
+};
 
 class Results extends Component {
   render() {
@@ -27,20 +73,77 @@ class Results extends Component {
       </div>
     );
   }
+};
+
+class Modal extends React.Component {
+  render() {
+    if (this.props.isOpen === false)
+      return null
+
+    let modalStyle = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      zIndex: '9999',
+      background: '#d26f2d'
+    }
+
+    let backdropStyle = {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      top: '0px',
+      left: '0px',
+      zIndex: '9998',
+      background: 'rgba(0, 0, 0, 0.3)'
+    }
+
+    return (
+      <div>
+        <div style={modalStyle}>{this.props.children}</div>
+        <div style={backdropStyle} onClick={e => this.close(e)}/>}
+      </div>
+    )
+  }
+
+  close(e) {
+    e.preventDefault()
+
+    if (this.props.onClose) {
+      this.props.onClose()
+    }
+  }
 }
 
 class App extends Component {
   constructor(props){
     super(props);
     this.state = {
+      isModalOpen: false,
       searchText: '',
+      fName: '',
+      lName: '',
+      email: '',
       searchResults: '',
       db: []
     };
-  }
+  };
+
+  openModal() {
+    this.setState({
+      isModalOpen: true,
+    });
+  };
+
+  closeModal() {
+    this.setState({
+      isModalOpen: false,
+    });
+  };
 
   searchDB = (query) => {
-    fetch('/users')
+    fetch('/api/guests')
       .then(res => res.json())
       .then(guests => {
         var names = [];
@@ -64,26 +167,59 @@ class App extends Component {
         });
       }
     }
-  }
+  };
 
-  onChange = (name) => {
+  postDB = (fname,lname,email) => {
+    fetch('/api/guests', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstName: fname,
+        lastName: lname,
+        email: email,
+      }),
+    });
+    //console.log(this.state);
+  };
+
+  onSearch = (name) => {
     this.setState({
       searchText: name,
     });
     this.searchDB(name);
+  };
+
+  onCreate = (fname,lname,email) => {
+    this.setState({
+      fName: fname,
+      lName: lname,
+      email: email,
+      isModalOpen: false,
+    }, () => {
+      console.log(this.state);
+    });
+    this.postDB(fname,lname,email);
+    
   }
 
   render() {
     return (
       <div className="App">
         <header className="App-header">
+          <Searchbar className="Searchbar" onChange={this.onSearch}/>
           <h1 className="App-title">Welcome to Guestek</h1>
-          <Searchbar className="Searchbar" onChange={this.onChange}/>
+          <button className="create" onClick={() => this.openModal()}>Create Guest</button>
           <Results results={this.state.searchResults}/>
+          <Modal isOpen={this.state.isModalOpen} onClose={() => this.closeModal()}>
+            <CreateGuest className="Form" onSubmit={this.onCreate}/>
+          </Modal>
         </header>
       </div>
     );
   }
-}
+};
 
 export default App;

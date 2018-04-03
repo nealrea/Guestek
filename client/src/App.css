@@ -7,22 +7,68 @@ html {
 }
 
 .App-header {
-  background-color: #00095F;
+  background-color: #d26f2d;
   height: 50px;
   width: 100%;
   padding-bottom: 30px;
   padding-top: 1px;
   color: white;
-  /*display: inline-flex;*/
+  display: inline-flex;
+}
+
+.head {
+  background-color: #F2F1F1;;
+  height: 50px;
+  width: 100%;
+  padding-bottom: 30px;
+  padding-top: 1px;
+  color: white;
+  display: inline-flex;
 }
 
 .search {
   border: 10px solid white;
-  font-size:1em;
+  font-size:2em;
   font-style: italic;
   padding:10px;
-  display:inline-block;
   width: 300px;
+  align-content: left;
+  height: 80px;
+}
+
+.create {
+  height: 80px;
+  width: 300px;
+  font-size: 2em;
+  font-style: italic;
+}
+
+.input_form {
+  align-content: center;
+  display: inline-block;
+  height: 300px;
+  width: 500px;
+  border-style: double;
+  border-color: black;
+}
+
+.input_bar {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  height: 40px;
+  width: 395px;
+  border-style: double;
+  font-size: 1em;
+  font-style: italic;
+}
+
+.submit {
+  height: 40px;
+  width: 100px;
+  font-size: 1em;
 }
 
 .results {
@@ -30,6 +76,8 @@ html {
 }
 
 .App-title {
-  font-size: 2em;
-  margin-bottom: 40px;
+  font-size: 3em;
+  margin-top: 15px;
+  margin-left: auto;
+  margin-right: auto;
 }

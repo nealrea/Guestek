@@ -3,17 +3,21 @@ var router = express.Router();
 var models = require('../models/');
 
 router.get('/', (req, res) => {
+	console.log(req.query.query);
 	models.Guests.findAll({
-	}).then((allGuests) => {
-		res.json(allGuests);
-	});
+		where: {
+			firstName: req.query.query,
+		},
+	}).then((guest) => {
+		res.json(guest);
+	}).catch((err) => console.log(err));
 });
 router.post('/', (req, res) => {
 	console.log(req.body);
 	models.Guests.create({
-		firstName: req.body.firstName,
-		lastName: req.body.lastName,
-		email: req.body.email
+		firstName: req.body.firstName.toLowerCase(),
+		lastName: req.body.lastName.toLowerCase(),
+		email: req.body.email.toLowerCase(),
 	});
 });
 

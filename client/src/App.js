@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import Bubbles from './Bubbles'
 
 /*
 class GuestFName extends Component {
@@ -125,7 +126,7 @@ class App extends Component {
       fName: '',
       lName: '',
       email: '',
-      searchResults: '',
+      searchResults: 'no match',
       db: []
     };
   };
@@ -143,30 +144,26 @@ class App extends Component {
   };
 
   searchDB = (query) => {
-    fetch('/api/guests')
+    fetch('/api/guests?query=' + query)
       .then(res => res.json())
       .then(guests => {
+        this.setState({ searchResults: ("no match")})
         var names = [];
         for(var i = 0; i < guests.length; i++){
-          names.push(guests[i].name);
+          names.push(guests[i].firstName.toLowerCase());
         }
-        var db = this.state.db.slice();
-        db.push(names);
-        this.setState({ db: names })
+        return names;
+      }).then((names) => {
+        for(var i = 0; i < names.length; i++){
+          if(names[i] === query.toLowerCase()){
+            this.setState({
+              searchResults: (query + " is in the database")
+            });
+            break;
+          }
+        }
       });
-    for(var i = 0; i < this.state.db.length; i++){
-      if(this.state.db[i] === query){
-        this.setState({
-          searchResults: (query + " is in the database")
-        });
-        break;
-      }
-      else{
-        this.setState({
-          searchResults: ("no match")
-        });
-      }
-    }
+    console.log(this.state);
   };
 
   postDB = (fname,lname,email) => {
@@ -212,11 +209,12 @@ class App extends Component {
           <Searchbar className="Searchbar" onChange={this.onSearch}/>
           <h1 className="App-title">Welcome to Guestek</h1>
           <button className="create" onClick={() => this.openModal()}>Create Guest</button>
-          <Results results={this.state.searchResults}/>
           <Modal isOpen={this.state.isModalOpen} onClose={() => this.closeModal()}>
             <CreateGuest className="Form" onSubmit={this.onCreate}/>
           </Modal>
         </header>
+        <Results results={this.state.searchResults}/>
+        <Bubbles/>
       </div>
     );
   }

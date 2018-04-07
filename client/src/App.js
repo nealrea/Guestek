@@ -28,11 +28,13 @@ class CreateGuest extends Component {
     var fname;
     var lname;
     var email;
+    var totalSpent;
     e.preventDefault();
     fname = this.refs.fname.value;
     lname = this.refs.lname.value;
     email = this.refs.email.value;
-    this.props.onSubmit(fname,lname,email);
+    totalSpent = this.refs.totalSpent.value;
+    this.props.onSubmit(fname,lname,email,totalSpent);
   }
 
   render() {
@@ -42,6 +44,7 @@ class CreateGuest extends Component {
         <input ref="fname" className="input_bar" placeholder="First Name"/>
         <input ref="lname" className="input_bar" placeholder="Last Name"/>
         <input ref="email" className="input_bar" placeholder="Email"/>
+        <input ref="totalSpent" className="input_bar" placeholder="Total Spent"/>
         <button className="submit" onClick={this.handleClick}>Submit</button>
       </form>
     );
@@ -126,6 +129,7 @@ class App extends Component {
       fName: '',
       lName: '',
       email: '',
+      totalSpent: 0,
       searchResults: 'no match',
       db: []
     };
@@ -185,7 +189,7 @@ class App extends Component {
     console.log(this.state);
   };
 
-  postDB = (fname,lname,email) => {
+  postDB = (fname,lname,email,totalSpent) => {
     fetch('/api/guests', {
       method: 'POST',
       headers: {
@@ -196,6 +200,7 @@ class App extends Component {
         firstName: fname,
         lastName: lname,
         email: email,
+        totalSpent: totalSpent,
       }),
     });
     //console.log(this.state);
@@ -208,16 +213,17 @@ class App extends Component {
     this.searchDB(name);
   };
 
-  onCreate = (fname,lname,email) => {
+  onCreate = (fname,lname,email,totalSpent) => {
     this.setState({
       fName: fname,
       lName: lname,
       email: email,
+      totalSpent: totalSpent,
       isModalOpen: false,
     }, () => {
       console.log(this.state);
     });
-    this.postDB(fname,lname,email);
+    this.postDB(fname,lname,email,totalSpent);
     
   }
 
@@ -232,7 +238,7 @@ class App extends Component {
             <CreateGuest className="Form" onSubmit={this.onCreate}/>
           </Modal>
         </header>
-        <Results results={this.state.searchResults}/>
+        {/*<Results results={this.state.searchResults}/>*/}
         <Bubbles data={this.state.db} width="1000px" height="1000px"/>
       </div>
     );

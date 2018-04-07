@@ -26,6 +26,7 @@ router.post('/', (req, res) => {
 		firstName: req.body.firstName.toLowerCase(),
 		lastName: req.body.lastName.toLowerCase(),
 		email: req.body.email.toLowerCase(),
+		totalSpent: req.body.totalSpent,
 	});
 });
 

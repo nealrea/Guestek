@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import Bubbles from './Bubbles'
+import Bubbles from './Bubbles';
 
 /*
 class GuestFName extends Component {
@@ -131,6 +131,25 @@ class App extends Component {
     };
   };
 
+  componentDidMount() {
+    this.loadDB();
+  };
+
+  loadDB = () => {
+    fetch('/api/guests/loadDB')
+      .then(res => res.json())
+      .then(allGuests => {
+        var guests = [];
+        for(var i = 0; i < allGuests.length; i++){
+          guests.push(allGuests[i]);
+        }
+        this.setState({
+          db: guests,
+        });
+        console.log(this.state);
+      });
+  };
+
   openModal() {
     this.setState({
       isModalOpen: true,
@@ -214,7 +233,7 @@ class App extends Component {
           </Modal>
         </header>
         <Results results={this.state.searchResults}/>
-        <Bubbles/>
+        <Bubbles data={this.state.db} width="1000px" height="1000px"/>
       </div>
     );
   }

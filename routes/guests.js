@@ -12,6 +12,14 @@ router.get('/', (req, res) => {
 		res.json(guest);
 	}).catch((err) => console.log(err));
 });
+
+router.get('/loadDB', (req, res) => {
+	models.Guests.findAll({})
+		.then((allGuests) => {
+			res.json(allGuests);
+	}).catch((err) => console.log(err));
+});
+
 router.post('/', (req, res) => {
 	console.log(req.body);
 	models.Guests.create({

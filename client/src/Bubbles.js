@@ -11,7 +11,7 @@ var width = 500;
 var height = 500;
 var simulation = forceSimulation()
 	.force('center', forceCenter(width / 2, height / 2))
-	.force('charge', forceManyBody)
+	//.force('charge', forceManyBody(-100))
 	.stop();
 
 class Bubbles extends Component {
@@ -38,6 +38,7 @@ class Bubbles extends Component {
     componentDidUpdate() {
     	console.log('updated');
     	this.renderCircles();
+    	simulation.force('charge', forceManyBody().strength(d => -d.totalSpent));
     	simulation.nodes(guests).alpha(0.9).restart();
     }
 

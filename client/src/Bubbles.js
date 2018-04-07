@@ -7,8 +7,8 @@ import { forceCenter } from 'd3-force';
 
 
 var guests = [];
-var width = 500;
-var height = 500;
+var width = 1000;
+var height = 600;
 var simulation = forceSimulation()
 	.force('center', forceCenter(width / 2, height / 2))
 	//.force('charge', forceManyBody(-100))

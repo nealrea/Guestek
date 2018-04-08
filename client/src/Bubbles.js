@@ -49,8 +49,8 @@ class Bubbles extends Component {
     	var totalSpentExtent = extent(guests, d => d.totalSpent);
 		amountScale.domain(totalSpentExtent);
     	this.renderCircles();
-    	simulation.force('charge', forceManyBody().strength(d => -d.totalSpent));
-    	//simulation.force('collide', forceCollide(d => d.totalSpent));
+    	//simulation.force('charge', forceManyBody().strength(d => -d.totalSpent));
+    	simulation.force('collide', forceCollide(d => amountScale(d.totalSpent)*100).strength(0.05));
     	simulation.nodes(guests).alpha(0.9).restart();
     }
 
@@ -67,7 +67,7 @@ class Bubbles extends Component {
     		.attr('fill-opacity', 0.25)
     		.attr('stroke-width', 2)
     		.merge(this.circles)
-    		.attr('r', d => d.totalSpent)
+    		.attr('r', d => amountScale(d.totalSpent)*100)
     		.attr('fill', d => colorScale(amountScale(d.totalSpent)))
     		.attr('stroke', d => colorScale(amountScale(d.totalSpent)));
     }

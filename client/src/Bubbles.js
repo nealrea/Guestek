@@ -4,11 +4,19 @@ import { select } from 'd3-selection'
 import { forceSimulation } from 'd3-force';
 import { forceManyBody } from 'd3-force';
 import { forceCenter } from 'd3-force';
+import { forceCollide } from 'd3-force';
+import { scaleLinear } from 'd3-scale';
+import { scaleLog } from 'd3-scale';
+import { extent } from 'd3-array';
+import chroma from 'chroma-js';
 
 
 var guests = [];
 var width = 1000;
 var height = 600;
+
+var colorScale = chroma.scale(['0EEF00','00095F']);
+var amountScale = scaleLog();
 var simulation = forceSimulation()
 	.force('center', forceCenter(width / 2, height / 2))
 	//.force('charge', forceManyBody(-100))
@@ -18,6 +26,7 @@ class Bubbles extends Component {
 	constructor(props) {
 		super(props);
 		this.forceTick = this.forceTick.bind(this);
+		simulation.on('tick', this.forceTick);
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -27,7 +36,7 @@ class Bubbles extends Component {
 	};
 
     componentWillMount() {
-    	simulation.on('tick', this.forceTick);
+    	
     }
 
     componentDidMount() {
@@ -37,8 +46,11 @@ class Bubbles extends Component {
 
     componentDidUpdate() {
     	console.log('updated');
+    	var totalSpentExtent = extent(guests, d => d.totalSpent);
+		amountScale.domain(totalSpentExtent);
     	this.renderCircles();
     	simulation.force('charge', forceManyBody().strength(d => -d.totalSpent));
+    	//simulation.force('collide', forceCollide(d => d.totalSpent));
     	simulation.nodes(guests).alpha(0.9).restart();
     }
 
@@ -52,9 +64,12 @@ class Bubbles extends Component {
 
     	//enter+update
     	this.circles = this.circles.enter().append('circle')
+    		.attr('fill-opacity', 0.25)
+    		.attr('stroke-width', 2)
     		.merge(this.circles)
     		.attr('r', d => d.totalSpent)
-    		.attr('opacity', 0.5);
+    		.attr('fill', d => colorScale(amountScale(d.totalSpent)))
+    		.attr('stroke', d => colorScale(amountScale(d.totalSpent)));
     }
 
     forceTick() {

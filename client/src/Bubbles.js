@@ -5,12 +5,16 @@ import { forceSimulation } from 'd3-force';
 import { forceManyBody } from 'd3-force';
 import { forceCenter } from 'd3-force';
 import { forceCollide } from 'd3-force';
+import { forceX } from 'd3-force';
+import { forceY } from 'd3-force';
 import { scaleLinear } from 'd3-scale';
 import { scaleLog } from 'd3-scale';
 import { scaleSqrt } from 'd3-scale';
+import { scaleBand } from 'd3-scale';
 import { extent } from 'd3-array';
 import { max } from 'd3-array';
 import chroma from 'chroma-js';
+//import _ from 'lodash';
 
 
 var guests = [];
@@ -18,6 +22,7 @@ var width = 1200;
 var height = 600;
 var ttFontSize = 20;
 
+var xScale = scaleBand().domain(['neal','anna','nolan','manisha','marshall','jim','john','daisy','peter','joe']).range([20,1180]);
 var colorScale = chroma.scale(['0EEF00','00095F']);
 var amountScale = scaleSqrt();
 var simulation = forceSimulation()
@@ -68,6 +73,19 @@ class Bubbles extends Component {
     	//simulation.force('charge', forceManyBody().strength(d => -d.totalSpent));
     	simulation.force('collide', forceCollide(d => amountScale(d.totalSpent)*150).strength(0.05));
     	simulation.nodes(guests).alpha(0.9).restart();
+
+    	//groups bubbles by numVisits
+    	//this.byNumVisits();
+    }
+
+    byNumVisits() {
+    	guests = guests.map(d => {
+			d.focusX = xScale(d.firstName);
+			return d;
+		})
+
+		simulation.force('x', forceX(d => d.focusX));
+		simulation.force('y', forceY(height/2));
     }
 
     renderCircles() {

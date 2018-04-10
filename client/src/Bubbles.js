@@ -18,6 +18,7 @@ import chroma from 'chroma-js';
 
 
 var guests = [];
+var groupByVisits = false;
 var width = 1200;
 var height = 600;
 var ttFontSize = 20;
@@ -40,6 +41,7 @@ class Bubbles extends Component {
 	componentWillReceiveProps(nextProps) {
 		console.log('received props');
 		guests = nextProps.data;
+		groupByVisits = nextProps.groupByVisits;
 	};
 
     componentWillMount() {
@@ -74,8 +76,17 @@ class Bubbles extends Component {
     	simulation.force('collide', forceCollide(d => amountScale(d.totalSpent)*150).strength(0.05));
     	simulation.nodes(guests).alpha(0.9).restart();
 
+    	console.log(groupByVisits);
     	//groups bubbles by numVisits
-    	//this.byNumVisits();
+    	if(groupByVisits){
+    		console.log('splitting bubbles');
+    		this.byNumVisits();
+    	}else{
+    		console.log('merging bubbles')
+    		simulation.force('x', forceX(d => width/2));
+			simulation.force('y', forceY(height/2));
+			simulation.restart();
+    	}
     }
 
     byNumVisits() {
@@ -86,6 +97,7 @@ class Bubbles extends Component {
 
 		simulation.force('x', forceX(d => d.focusX));
 		simulation.force('y', forceY(height/2));
+		simulation.restart();
     }
 
     renderCircles() {

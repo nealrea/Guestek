@@ -120,6 +120,20 @@ class Modal extends React.Component {
   }
 }
 
+class ToggleDisplay extends Component {
+  handleClick = () => {
+    this.props.onClick();
+  }
+
+  render() {
+    return(
+      <div>
+        <button className="toggle" onClick={this.handleClick}>By numVisits</button>
+      </div>
+    );
+  };
+};
+
 class App extends Component {
   constructor(props){
     super(props);
@@ -131,7 +145,8 @@ class App extends Component {
       email: '',
       totalSpent: 0,
       searchResults: 'no match',
-      db: []
+      db: [],
+      groupByVisits: false,
     };
   };
 
@@ -227,6 +242,12 @@ class App extends Component {
     
   }
 
+  toggleDisplay = () => {
+    this.setState({
+      groupByVisits: (!this.state.groupByVisits)
+    });
+  }
+
   render() {
     return (
       <div className="App">
@@ -239,7 +260,8 @@ class App extends Component {
           </Modal>
         </header>
         {/*<Results results={this.state.searchResults}/>*/}
-        <Bubbles data={this.state.db} width="1000px" height="1000px"/>
+        <ToggleDisplay onClick={this.toggleDisplay}/>
+        <Bubbles data={this.state.db} groupByVisits={this.state.groupByVisits} width="1000px" height="1000px"/>
       </div>
     );
   }

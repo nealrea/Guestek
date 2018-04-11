@@ -43,6 +43,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    numVisits: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    }
   }, {});
   Guests.associate = function(models) {
     // associations can be defined here

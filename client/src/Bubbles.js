@@ -23,12 +23,15 @@ var width = 1200;
 var height = 600;
 var ttFontSize = 20;
 
-var xScale = scaleBand().domain(['neal','anna','nolan','manisha','marshall','jim','john','daisy','peter','joe']).range([20,1180]);
+//var xScale = scaleBand().domain(['neal','anna','nolan','manisha','marshall','jim','john','daisy','peter','joe']).range([20,1180]);
+var xScale = scaleBand().domain([0,1,2,3])
+	.range([0,800])
+	.rangeRound([0,width])
+	.paddingOuter(0.03);
 var colorScale = chroma.scale(['0EEF00','00095F']);
 var amountScale = scaleSqrt();
+var charge = 125;
 var simulation = forceSimulation()
-	.force('center', forceCenter(width / 2, height / 2))
-	//.force('charge', forceManyBody(-100))
 	.stop();
 
 class Bubbles extends Component {
@@ -72,11 +75,24 @@ class Bubbles extends Component {
     	//var totalSpentExtent = extent(guests, d => d.totalSpent);
 		amountScale.domain([0.01, maxSpent]);
     	this.renderCircles();
-    	//simulation.force('charge', forceManyBody().strength(d => -d.totalSpent));
-    	simulation.force('collide', forceCollide(d => amountScale(d.totalSpent)*150).strength(0.05));
+
+    	guests.forEach(guest => {
+			var xDom;
+			if(guest.numVisits >= 75)
+				xDom = 3;
+			else if(guest.numVisits >= 50)
+				xDom = 2;
+			else if(guest.numVisits >= 25)
+				xDom = 1;
+			else
+				xDom = 0;
+			guest.focusX = xScale(xDom);
+		}) 
+
+		simulation.force('collide', forceCollide(d => amountScale(d.totalSpent)*charge).strength(0.15));
+		simulation.force('center', forceCenter(width / 2, height / 2));
     	simulation.nodes(guests).alpha(0.9).restart();
 
-    	console.log(groupByVisits);
     	//groups bubbles by numVisits
     	if(groupByVisits){
     		console.log('splitting bubbles');
@@ -90,11 +106,6 @@ class Bubbles extends Component {
     }
 
     byNumVisits() {
-    	guests = guests.map(d => {
-			d.focusX = xScale(d.firstName);
-			return d;
-		})
-
 		simulation.force('x', forceX(d => d.focusX));
 		simulation.force('y', forceY(height/2));
 		simulation.restart();
@@ -113,7 +124,7 @@ class Bubbles extends Component {
     		.attr('fill-opacity', 0.25)
     		.attr('stroke-width', 2)
     		.merge(this.circles)
-    		.attr('r', d => amountScale(d.totalSpent)*150)
+    		.attr('r', d => amountScale(d.totalSpent)*charge)
     		.attr('fill', d => colorScale(amountScale(d.totalSpent)))
     		.attr('stroke', d => colorScale(amountScale(d.totalSpent)))
     		.on('mouseover', d => this.mouseOver(d))
@@ -150,7 +161,7 @@ class Bubbles extends Component {
 
 	render() {
 	      return (
-	      	<svg width={width} height={height} ref='container'>
+	      	<svg ref='container' className='bubbleChart' width={width} height={height}>
 
 	      	</svg>
 	      );

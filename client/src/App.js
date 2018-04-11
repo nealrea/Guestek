@@ -128,7 +128,9 @@ class ToggleDisplay extends Component {
   render() {
     return(
       <div>
-        <button className="toggle" onClick={this.handleClick}>By numVisits</button>
+        <input ref="groupBubbles" type="radio" name="displayType" className="toggle" onChange={this.handleClick} checked/>
+        <input ref="splitBubbles" type="radio" name="displayType" className="toggle" onChange={this.handleClick}/>
+        {/*<button className="toggle" onClick={this.handleClick}>By numVisits</button>*/}
       </div>
     );
   };

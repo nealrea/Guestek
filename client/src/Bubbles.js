@@ -20,7 +20,7 @@ import chroma from 'chroma-js';
 var guests = [];
 var groupByVisits = false;
 var width = 1200;
-var height = 600;
+var height = 550;
 var ttFontSize = 20;
 
 //var xScale = scaleBand().domain(['neal','anna','nolan','manisha','marshall','jim','john','daisy','peter','joe']).range([20,1180]);
@@ -42,7 +42,7 @@ class Bubbles extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		console.log('received props');
+		//console.log('received props');
 		guests = nextProps.data;
 		groupByVisits = nextProps.groupByVisits;
 	};
@@ -52,7 +52,7 @@ class Bubbles extends Component {
     }
 
     componentDidMount() {
-    	console.log('mounted');
+    	//console.log('mounted');
     	this.container = select(this.refs.container);
     	this.hover = select(this.refs.container).append('g');
     	this.hover.append('rect')
@@ -69,7 +69,7 @@ class Bubbles extends Component {
     }
 
     componentDidUpdate() {
-    	console.log('updated');
+    	//console.log('updated');
     	var oneCent = 0.01;
     	var maxSpent = max(guests, d => d.totalSpent);
     	//var totalSpentExtent = extent(guests, d => d.totalSpent);
@@ -95,10 +95,10 @@ class Bubbles extends Component {
 
     	//groups bubbles by numVisits
     	if(groupByVisits){
-    		console.log('splitting bubbles');
+    		//console.log('splitting bubbles');
     		this.byNumVisits();
     	}else{
-    		console.log('merging bubbles')
+    		//console.log('merging bubbles')
     		simulation.force('x', forceX(d => width/2));
 			simulation.force('y', forceY(height/2));
 			simulation.restart();
@@ -128,10 +128,18 @@ class Bubbles extends Component {
     		.attr('fill', d => colorScale(amountScale(d.totalSpent)))
     		.attr('stroke', d => colorScale(amountScale(d.totalSpent)))
     		.on('mouseover', d => this.mouseOver(d))
-    		.on('mouseleave', () => this.hover.style('display', 'none'));
+    		.on('mouseleave', d => this.mouseLeave(d));
     }
 
     mouseOver(d) {
+    	var currCircle = this.circles.filter(p => {
+    		if(p === d){
+    			return p;
+    		}
+    	})
+    	console.log(currCircle);
+    	currCircle.attr('stroke', 'black')
+    		.attr('stroke-width', 3);
 
     	var capitalize = name => {
     		return name[0].toUpperCase() + name.substr(1);
@@ -148,6 +156,19 @@ class Bubbles extends Component {
       		.attr('width', width + 6)
       		.attr('x', -width / 2 - 3)
       		.attr('fill', '#FF988B');
+    }
+
+    mouseLeave(d) {
+    	var currCircle = this.circles.filter(p => {
+    		if(p === d){
+    			return p;
+    		}
+    	})
+    	console.log(currCircle);
+    	currCircle.attr('stroke', colorScale(amountScale(d.totalSpent)))
+    		.attr('stroke-width', 2);
+
+    	this.hover.style('display', 'none')
     }
 
     forceTick() {

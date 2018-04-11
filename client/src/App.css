@@ -28,19 +28,23 @@ html {
 
 .search {
   border: 10px solid white;
-  font-size:2em;
+  font-size:1.2em;
   font-style: italic;
   padding:10px;
-  width: 300px;
+  height: 50px;
+  width: 200px;
   align-content: left;
-  height: 80px;
+  margin-top: 15px;
+  margin-left: 20px;
 }
 
 .create {
-  height: 80px;
-  width: 300px;
-  font-size: 2em;
+  height: 50px;
+  width: 200px;
+  font-size: 1.2em;
   font-style: italic;
+  margin-top: 15px;
+  margin-right: 20px;
 }
 
 .input_form {
@@ -120,6 +124,7 @@ html {
   margin-top: 20px;
   margin-left: 40px;
   border-style: solid;
+  background-color: #A0F798;
 }
 
 .viewText {
@@ -136,8 +141,7 @@ html {
   position: relative;
   display: inline-block;
   width: 60px;
-  height: 34px;
-  margin-top: 2px;
+  height: 38px;
 }
 
 .switch input {display:none;}
@@ -157,7 +161,7 @@ html {
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px;
+  height: 30px;
   width: 26px;
   left: 4px;
   bottom: 4px;

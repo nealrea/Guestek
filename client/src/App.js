@@ -128,7 +128,7 @@ class ToggleDisplay extends Component {
   render() {
     return(
       <div className="toggleSwitch">
-        <div className="viewText"><p>Group Center</p></div>
+        <div className="viewText"><p>Group to Center</p></div>
         <label className="switch">
           <input type="checkbox" onClick={this.handleClick}/>
           <div className="slider"/>
@@ -273,7 +273,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <Searchbar className="Searchbar" onChange={this.onSearch}/>
-          <h1 className="App-title">Welcome to Guestek</h1>
+          <h1 className="App-title">G U E S T E K</h1>
           <button className="create" onClick={() => this.openModal()}>Create Guest</button>
           <Modal isOpen={this.state.isModalOpen} onClose={() => this.closeModal()}>
             <CreateGuest className="Form" onSubmit={this.onCreate}/>

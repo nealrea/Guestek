@@ -112,7 +112,6 @@ class Bubbles extends Component {
     }
 
     renderCircles() {
-    	console.log(guests);
     	//draw guest circles
     	this.circles = this.container.selectAll('circle')
     		.data(guests, d => d.id);

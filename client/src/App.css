@@ -88,6 +88,32 @@ html {
   display: block;
 }
 
+.numVisitsText {
+  display: inline-flex;
+  margin-top: 40px;
+  font-size: 1.5em;
+}
+
+.visits1 {
+  position: absolute;
+  left: 235px;
+}
+
+.visits2 {
+  position: absolute;
+  left: 530px;
+}
+
+.visits3 {
+  position: absolute;
+  left: 820px;
+}
+
+.visits4 {
+  position: absolute;
+  left: 1130px;
+}
+
 /*begin toggle switch*/
 .toggleSwitch {
   display: inline-flex;

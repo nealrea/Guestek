@@ -89,7 +89,7 @@ class Bubbles extends Component {
 			guest.focusX = xScale(xDom);
 		}) 
 
-		simulation.force('collide', forceCollide(d => amountScale(d.totalSpent)*charge).strength(0.15));
+		simulation.force('collide', forceCollide(d => amountScale(d.totalSpent)*charge).strength(0.5));
 		simulation.force('center', forceCenter(width / 2, height / 2));
     	simulation.nodes(guests).alpha(0.9).restart();
 
@@ -112,6 +112,7 @@ class Bubbles extends Component {
     }
 
     renderCircles() {
+    	console.log(guests);
     	//draw guest circles
     	this.circles = this.container.selectAll('circle')
     		.data(guests, d => d.id);
@@ -137,7 +138,6 @@ class Bubbles extends Component {
     			return p;
     		}
     	})
-    	console.log(currCircle);
     	currCircle.attr('stroke', 'black')
     		.attr('stroke-width', 3);
 
@@ -164,7 +164,6 @@ class Bubbles extends Component {
     			return p;
     		}
     	})
-    	console.log(currCircle);
     	currCircle.attr('stroke', colorScale(amountScale(d.totalSpent)))
     		.attr('stroke-width', 2);
 

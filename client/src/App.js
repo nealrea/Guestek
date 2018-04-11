@@ -139,6 +139,21 @@ class ToggleDisplay extends Component {
   };
 };
 
+class NumVisits extends Component {
+  render(){
+    if(this.props.groupByVisits === false)
+      return null;
+    return(
+      <div className="numVisitsText">
+        <p className="visits1">1-25</p>
+        <p className="visits2">26-50</p>
+        <p className="visits3">51-75</p>
+        <p className="visits4">76+</p>
+      </div>
+    )
+  }
+}
+
 class App extends Component {
   constructor(props){
     super(props);
@@ -266,6 +281,8 @@ class App extends Component {
         </header>
         {/*<Results results={this.state.searchResults}/>*/}
         <ToggleDisplay onClick={this.toggleDisplay}/>
+        <br/>
+        <NumVisits groupByVisits={this.state.groupByVisits}/>
         <Bubbles data={this.state.db} groupByVisits={this.state.groupByVisits} width="1000px" height="1000px"/>
       </div>
     );

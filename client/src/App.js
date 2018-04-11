@@ -143,7 +143,7 @@ class ToggleDisplay extends Component {
 
 class NumVisits extends Component {
   render(){
-    if(this.props.groupByVisits === false)
+    if(this.props.groupByVisits === false || this.props.displayGuestView === true)
       return null;
     return(
       <div className="numVisitsText">
@@ -291,7 +291,7 @@ class App extends Component {
         {/*<Results results={this.state.searchResults}/>*/}
         <ToggleDisplay onClick={this.toggleDisplay} displayGuestView={this.state.displayGuestView}/>
         <br/>
-        <NumVisits groupByVisits={this.state.groupByVisits}/>
+        <NumVisits groupByVisits={this.state.groupByVisits} displayGuestView={this.state.displayGuestView}/>
         <Bubbles data={this.state.db} groupByVisits={this.state.groupByVisits} 
           displayGuestView={this.state.displayGuestView} clickGuest={this.displayGuestView} width="1000px" height="1000px"/>
       </div>

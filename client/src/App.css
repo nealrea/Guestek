@@ -7,7 +7,7 @@ html {
 }
 
 .App-header {
-  background-color: #d26f2d;
+  background-color: #4F58A8;
   height: 50px;
   width: 100%;
   padding-bottom: 30px;
@@ -87,6 +87,73 @@ html {
 .bubbleChart {
   display: block;
 }
+
+/*begin toggle switch*/
+.toggleSwitch {
+  display: inline-flex;
+  margin-top: 20px;
+  margin-left: 40px;
+  border-style: solid;
+}
+
+.viewText {
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  margin-top: 2px;
+}
+
+.switch input {display:none;}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .1s;
+  transition: .1s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .1s;
+  transition: .1s;
+}
+
+input:checked + .slider {
+  background-color: #F07565;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+/*end toggle switch*/
 
 .App-title {
   font-size: 3em;

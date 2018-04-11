@@ -90,7 +90,7 @@ class Modal extends React.Component {
       left: '50%',
       transform: 'translate(-50%, -50%)',
       zIndex: '9999',
-      background: '#d26f2d'
+      background: '#F07565'
     }
 
     let backdropStyle = {
@@ -127,10 +127,13 @@ class ToggleDisplay extends Component {
 
   render() {
     return(
-      <div>
-        <input ref="groupBubbles" type="radio" name="displayType" className="toggle" onChange={this.handleClick} checked/>
-        <input ref="splitBubbles" type="radio" name="displayType" className="toggle" onChange={this.handleClick}/>
-        {/*<button className="toggle" onClick={this.handleClick}>By numVisits</button>*/}
+      <div className="toggleSwitch">
+        <div className="viewText"><p>Group Center</p></div>
+        <label className="switch">
+          <input type="checkbox" onClick={this.handleClick}/>
+          <div className="slider"/>
+        </label>
+        <div className="viewText"><p>Split by # Visits</p></div>
       </div>
     );
   };

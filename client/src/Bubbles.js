@@ -161,9 +161,9 @@ class Bubbles extends Component {
 
 	render() {
 	      return (
-	      	<svg ref='container' className='bubbleChart' width={width} height={height}>
-
-	      	</svg>
+	      	<div className='bubbleChart'>
+		      	<svg ref='container' width={width} height={height}></svg>
+	      	</div>
 	      );
    }
 }

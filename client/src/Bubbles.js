@@ -19,6 +19,7 @@ import chroma from 'chroma-js';
 
 var guests = [];
 var groupByVisits = false;
+var displayGuestView = false;
 var width = 1200;
 var height = 550;
 var ttFontSize = 20;
@@ -43,8 +44,10 @@ class Bubbles extends Component {
 
 	componentWillReceiveProps(nextProps) {
 		//console.log('received props');
+		console.log(nextProps);
 		guests = nextProps.data;
 		groupByVisits = nextProps.groupByVisits;
+		displayGuestView = nextProps.displayGuestView;
 	};
 
     componentWillMount() {
@@ -74,6 +77,7 @@ class Bubbles extends Component {
     	var maxSpent = max(guests, d => d.totalSpent);
     	//var totalSpentExtent = extent(guests, d => d.totalSpent);
 		amountScale.domain([0.01, maxSpent]);
+    	
     	this.renderCircles();
 
     	guests.forEach(guest => {
@@ -128,7 +132,8 @@ class Bubbles extends Component {
     		.attr('fill', d => colorScale(amountScale(d.totalSpent)))
     		.attr('stroke', d => colorScale(amountScale(d.totalSpent)))
     		.on('mouseover', d => this.mouseOver(d))
-    		.on('mouseleave', d => this.mouseLeave(d));
+    		.on('mouseleave', d => this.mouseLeave(d))
+    		.on('click', d => this.mouseClick(d));
     }
 
     mouseOver(d) {
@@ -169,6 +174,10 @@ class Bubbles extends Component {
     	this.hover.style('display', 'none')
     }
 
+    mouseClick(d) {
+    	this.props.clickGuest();
+    }
+
     forceTick() {
     	//console.log(simulation.force);
     	this.circles
@@ -179,11 +188,15 @@ class Bubbles extends Component {
 
 
 	render() {
-	      return (
-	      	<div className='bubbleChart'>
-		      	<svg ref='container' width={width} height={height}></svg>
-	      	</div>
-	      );
+		if(displayGuestView)
+			//add code here to render singele guest information (i.e. items ordered, sized by frequency...)
+			return null;
+		else
+	      	return (
+	      		<div className='bubbleChart'>
+		      		<svg ref='container' width={width} height={height}></svg>
+	      		</div>
+	      	);
    }
 }
 export default Bubbles;

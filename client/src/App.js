@@ -126,6 +126,8 @@ class ToggleDisplay extends Component {
   }
 
   render() {
+    if(this.props.displayGuestView)
+      return null;
     return(
       <div className="toggleSwitch">
         <div className="viewText"><p>Group to Center</p></div>
@@ -167,6 +169,7 @@ class App extends Component {
       searchResults: 'no match',
       db: [],
       groupByVisits: false,
+      displayGuestView: false,
     };
   };
 
@@ -268,6 +271,12 @@ class App extends Component {
     });
   }
 
+  displayGuestView = () => {
+    this.setState({
+      displayGuestView: (!this.state.displayGuestView)
+    });
+  }
+
   render() {
     return (
       <div className="App">
@@ -280,10 +289,11 @@ class App extends Component {
           </Modal>
         </header>
         {/*<Results results={this.state.searchResults}/>*/}
-        <ToggleDisplay onClick={this.toggleDisplay}/>
+        <ToggleDisplay onClick={this.toggleDisplay} displayGuestView={this.state.displayGuestView}/>
         <br/>
         <NumVisits groupByVisits={this.state.groupByVisits}/>
-        <Bubbles data={this.state.db} groupByVisits={this.state.groupByVisits} width="1000px" height="1000px"/>
+        <Bubbles data={this.state.db} groupByVisits={this.state.groupByVisits} 
+          displayGuestView={this.state.displayGuestView} clickGuest={this.displayGuestView} width="1000px" height="1000px"/>
       </div>
     );
   }

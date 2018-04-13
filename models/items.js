@@ -24,6 +24,6 @@ module.exports = (sequelize, DataTypes) => {
     	foreignKey: 'itemId',
     })
   };
-  sequelize.sync(Items);
+  //sequelize.sync(Items);
   return Items;
 };

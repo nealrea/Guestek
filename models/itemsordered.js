@@ -19,6 +19,6 @@ module.exports = (sequelize, DataTypes) => {
   ItemsOrdered.associate = function(models) {
     // associations can be defined here
   };
-  sequelize.sync(ItemsOrdered);
+  //sequelize.sync(ItemsOrdered);
   return ItemsOrdered;
 };

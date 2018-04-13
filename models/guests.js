@@ -55,6 +55,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'guestId',
     })
   };
-  sequelize.sync(Guests);
+  //sequelize.sync(Guests);
   return Guests;
 };

@@ -48,8 +48,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     }
   }, {});
-  Guests.associate = function(models) {
-    // associations can be defined here
+  Guests.associate = (models) => {
+    models.Guests.belongsToMany(models.Items, {
+      through: 'ItemsOrdered',
+      as: 'itemsOrdered',
+    })
   };
   return Guests;
 };

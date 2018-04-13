@@ -189,8 +189,7 @@ class Bubbles extends Component {
 
 	render() {
 		if(displayGuestView)
-			//add code here to render singele guest information (i.e. items ordered, sized by frequency...)
-			return null;
+			return <h1>add code here to render single guest information (i.e. items ordered, sized by frequency...)</h1>;
 		else
 	      	return (
 	      		<div className='bubbleChart'>

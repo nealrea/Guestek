@@ -150,9 +150,12 @@ class Bubbles extends Component {
     	}
 
     	this.hover.style('display', 'block');
-    	//puts tooltip right below center of bubble
-    	//this.hover.attr('transform', 'translate(' + [d.x, d.y + amountScale(d.totalSpent)] + ')');
-    	this.hover.attr('transform', 'translate(' + [1000, 50] + ')');
+    	if(groupByVisits){
+    		//puts tooltip right below center of bubble
+    		this.hover.attr('transform', 'translate(' + [d.x, 60] + ')');
+    	}else{
+    		this.hover.attr('transform', 'translate(' + [d.x, 425] + ')');
+    	}
     	this.hover.select('text')
     		.text(capitalize(d.firstName) + " " + capitalize(d.lastName) + " - $" + d.totalSpent.toFixed(2));
     	var width = this.hover.select('text').node().getBoundingClientRect().width;

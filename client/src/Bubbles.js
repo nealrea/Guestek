@@ -44,7 +44,6 @@ class Bubbles extends Component {
 
 	componentWillReceiveProps(nextProps) {
 		//console.log('received props');
-		console.log(nextProps);
 		guests = nextProps.data;
 		groupByVisits = nextProps.groupByVisits;
 		displayGuestView = nextProps.displayGuestView;
@@ -175,7 +174,10 @@ class Bubbles extends Component {
     }
 
     mouseClick(d) {
+    	console.log(d);
     	this.props.clickGuest();
+    	/*this.circles = this.container.select('circle')
+    		.data(d, d => d.items);*/
     }
 
     forceTick() {
@@ -188,14 +190,11 @@ class Bubbles extends Component {
 
 
 	render() {
-		if(displayGuestView)
-			return <h1>add code here to render single guest information (i.e. items ordered, sized by frequency...)</h1>;
-		else
-	      	return (
-	      		<div className='bubbleChart'>
-		      		<svg ref='container' width={width} height={height}></svg>
-	      		</div>
-	      	);
+		return (
+      		<div className='bubbleChart'>
+	      		<svg ref='container' width={width} height={height}></svg>
+      		</div>
+      	);
    }
 }
 export default Bubbles;

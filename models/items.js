@@ -17,8 +17,13 @@ module.exports = (sequelize, DataTypes) => {
     	allowNull: false,
     },
   }, {});
-  Items.associate = function(models) {
-    // associations can be defined here
+  Items.associate = (models) => {
+    Items.belongsToMany(models.Guests, {
+    	through: 'ItemsOrdered',
+    	as: 'guests',
+    	foreignKey: 'itemId',
+    })
   };
+  sequelize.sync(Items);
   return Items;
 };

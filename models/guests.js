@@ -52,7 +52,9 @@ module.exports = (sequelize, DataTypes) => {
     models.Guests.belongsToMany(models.Items, {
       through: 'ItemsOrdered',
       as: 'itemsOrdered',
+      foreignKey: 'guestId',
     })
   };
+  sequelize.sync(Guests);
   return Guests;
 };

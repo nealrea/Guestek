@@ -13,9 +13,12 @@ module.exports = (sequelize, DataTypes) => {
     	type: DataTypes.INTEGER,
     	allowNull: false,
     },
-  }, {});
+  }, {
+  	freezeTableName: true
+  });
   ItemsOrdered.associate = function(models) {
     // associations can be defined here
   };
+  sequelize.sync(ItemsOrdered);
   return ItemsOrdered;
 };

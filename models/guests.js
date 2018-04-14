@@ -49,12 +49,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {});
   Guests.associate = (models) => {
-    models.Guests.belongsToMany(models.Items, {
-      through: 'ItemsOrdered',
-      as: 'itemsOrdered',
-      foreignKey: 'guestId',
-    })
+    models.Guests.hasMany(models.ItemsOrdered)
   };
-  //sequelize.sync(Guests);
+  //sequelize.sync();
   return Guests;
 };

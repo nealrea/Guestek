@@ -18,6 +18,7 @@ import chroma from 'chroma-js';
 
 
 var guests = [];
+var itemsOrdered = {};
 var groupByVisits = false;
 var displayGuestView = false;
 var width = 1200;
@@ -115,6 +116,13 @@ class Bubbles extends Component {
 		simulation.restart();
     }
 
+    loadItemsOrdered = (query) => {
+    	var res = fetch('/api/itemsOrdered/loadItemsOrdered?query=' + query)
+    		.then(res => res.json()).catch(err => console.log(err));
+    	console.log(res);
+    	return res;
+    }
+
     renderCircles() {
     	//draw guest circles
     	this.circles = this.container.selectAll('circle')
@@ -178,7 +186,10 @@ class Bubbles extends Component {
     }
 
     mouseClick(d) {
+    	//sets state to switch to guest view
     	this.props.clickGuest();
+    	console.log(d);
+    	itemsOrdered = this.loadItemsOrdered(d.id);
     }
 
     forceTick() {

@@ -1,14 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   var ItemsOrdered = sequelize.define('ItemsOrdered', {
-    guestId: {
-    	type: DataTypes.INTEGER,
-    	allowNull: false,
-    },
-    itemId: {
-    	type: DataTypes.INTEGER,
-    	allowNull: false,
-    },
     timesOrdered: {
     	type: DataTypes.INTEGER,
     	allowNull: false,
@@ -16,9 +8,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
   	freezeTableName: true
   });
-  ItemsOrdered.associate = function(models) {
-    // associations can be defined here
+  ItemsOrdered.associate = (models) => {
+    ItemsOrdered.belongsTo(models.Guests);
+    ItemsOrdered.belongsTo(models.Items);
   };
-  //sequelize.sync(ItemsOrdered);
+  sequelize.sync();
   return ItemsOrdered;
 };

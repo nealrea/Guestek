@@ -18,7 +18,8 @@ import chroma from 'chroma-js';
 
 
 var guests = [];
-var itemsOrdered = {};
+var itemsOrdered = [];
+var items = [];
 var groupByVisits = false;
 var displayGuestView = false;
 var width = 1200;
@@ -70,6 +71,9 @@ class Bubbles extends Component {
       		//.attr('dx', '6em')
     		.attr('fill', 'black')
     		.style('font-size', ttFontSize);
+
+    	//load all menu items
+    	//items = this.loadItems();	
     }
 
     componentDidUpdate() {
@@ -117,10 +121,20 @@ class Bubbles extends Component {
     }
 
     loadItemsOrdered = (query) => {
-    	var res = fetch('/api/itemsOrdered/loadItemsOrdered?query=' + query)
-    		.then(res => res.json()).catch(err => console.log(err));
-    	console.log(res);
-    	return res;
+
+    	return Promise.all([
+    		fetch('/api/itemsOrdered/loadItemsOrdered?query=' + query)
+    			.then(res => res.json()).catch(err => console.log(err)),
+    		fetch('/api/items/loadItems')
+    			.then(res => res.json()).catch(err => console.log(err))
+    	]).then(([itemsOrdered, allItems]) => {
+    		var findItem = (id) => allItems.find(item => item.id === id);
+    		itemsOrdered.forEach(itemOrdered => Object.assign(itemOrdered, findItem(itemOrdered.ItemId)));
+    		console.log(allItems);
+    		console.log(itemsOrdered);
+    		return itemsOrdered;
+    	});
+
     }
 
     renderCircles() {
@@ -142,6 +156,10 @@ class Bubbles extends Component {
     		.on('mouseover', d => this.mouseOver(d))
     		.on('mouseleave', d => this.mouseLeave(d))
     		.on('click', d => this.mouseClick(d));
+    }
+
+    renderItemsCircles(itemId) {
+    	this.circles = this.container.selectAll
     }
 
     mouseOver(d) {
@@ -189,7 +207,10 @@ class Bubbles extends Component {
     	//sets state to switch to guest view
     	this.props.clickGuest();
     	console.log(d);
+    	this.renderItemsCircles(d.id);
     	itemsOrdered = this.loadItemsOrdered(d.id);
+    	console.log(itemsOrdered);
+
     }
 
     forceTick() {
@@ -203,7 +224,11 @@ class Bubbles extends Component {
 
 	render() {
 		if(displayGuestView)
-			return <h1>add code here to render single guest information (i.e. items ordered, sized by frequency...)</h1>;
+			return (
+				<div className='bubbleChart'>
+		      		<svg ref='container' width={width} height={height}></svg>
+	      		</div>
+			);
 		else
 	      	return (
 	      		<div className='bubbleChart'>

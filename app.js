@@ -9,7 +9,9 @@ var models = require('./models/');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var guests = require('./routes/guests');
+//var items = require('./routes/items');
 var itemsOrdered = require('./routes/itemsOrdered');
+var items = require('./routes/items');
 
 var app = express();
 
@@ -28,7 +30,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/api/users', users);
 app.use('/api/guests', guests);
+//app.use('/api/itemsOrdered', items);
 app.use('/api/itemsOrdered', itemsOrdered);
+app.use('/api/items', items);
 /*
 app.get('/models/guests', (req, res) => {
 	res.json({name: "hey"});

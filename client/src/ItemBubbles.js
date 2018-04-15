@@ -10,6 +10,7 @@ import { forceY } from 'd3-force';
 import { scaleLinear } from 'd3-scale';
 import { scaleLog } from 'd3-scale';
 import { scaleSqrt } from 'd3-scale';
+import { scalePow } from 'd3-scale';
 import { scaleBand } from 'd3-scale';
 import { extent } from 'd3-array';
 import { max } from 'd3-array';
@@ -17,11 +18,10 @@ import chroma from 'chroma-js';
 //import _ from 'lodash';
 
 
-var guests = [];
 var itemsOrdered = [];
 var items = [];
 var groupByVisits = false;
-var displayGuestView = false;
+var displayGuestView = true;
 var width = 1200;
 var height = 550;
 var ttFontSize = 20;
@@ -31,12 +31,13 @@ var xScale = scaleBand().domain([0,1,2,3])
 	.rangeRound([0,width])
 	.paddingOuter(0.03);
 var colorScale = chroma.scale(['0EEF00','00095F']);
-var amountScale = scaleSqrt();
+var priceScale = scaleLinear();
+var frequencyScale = scalePow();
 var charge = 125;
 var simulation = forceSimulation()
 	.stop();
 
-class Bubbles extends Component {
+class ItemBubbles extends Component {
 	constructor(props) {
 		super(props);
 		this.forceTick = this.forceTick.bind(this);
@@ -44,10 +45,9 @@ class Bubbles extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		//console.log('received props');
+		console.log('received props');
 		console.log(nextProps);
-		guests = nextProps.data;
-		groupByVisits = nextProps.groupByVisits;
+		itemsOrdered = nextProps.data;
 		displayGuestView = nextProps.displayGuestView;
 	};
 
@@ -72,15 +72,23 @@ class Bubbles extends Component {
     		.style('font-size', ttFontSize);
     }
 
+    shouldComponentUpdate() {
+        if(itemsOrdered.length === 0)
+            return false;
+        else
+            return true;
+    }
+
     componentDidUpdate() {
     	//console.log('updated');
-    	var oneCent = 0.01;
-    	var maxSpent = max(guests, d => d.totalSpent);
-		amountScale.domain([0.01, maxSpent]);
+        var priceRange = extent(itemsOrdered, d => d.price);
+    	var maxFrequency = max(itemsOrdered, d => d.timesOrdered);
+        priceScale.domain(priceRange)
+		frequencyScale.domain([1, maxFrequency]);
     	
     	this.renderCircles();
 
-    	guests.forEach(guest => {
+    	/*guests.forEach(guest => {
 			var xDom;
 			if(guest.numVisits >= 75)
 				xDom = 3;
@@ -91,12 +99,13 @@ class Bubbles extends Component {
 			else
 				xDom = 0;
 			guest.focusX = xScale(xDom);
-		}) 
+		}) */
 
-		simulation.force('collide', forceCollide(d => amountScale(d.totalSpent)*charge).strength(0.5));
+		simulation.force('collide', forceCollide(50).strength(0.5));
 		simulation.force('center', forceCenter(width / 2, height / 2));
-    	simulation.nodes(guests).alpha(0.9).restart();
+    	simulation.nodes(itemsOrdered).alpha(0.9).restart();
 
+        /*
     	//groups bubbles by numVisits
     	if(groupByVisits){
     		//console.log('splitting bubbles');
@@ -107,19 +116,25 @@ class Bubbles extends Component {
 			simulation.force('y', forceY(height/2));
 			simulation.restart();
     	}
+        */
+        simulation.force('x', forceX(d => width/2));
+        simulation.force('y', forceY(height/2));
+        simulation.restart();
     }
-
+/*
     byNumVisits() {
 		simulation.force('x', forceX(d => d.focusX));
 		simulation.force('y', forceY(height/2));
 		simulation.restart();
     }
-
+*/
     renderCircles() {
-    	//draw guest circles
+        console.log(itemsOrdered);
+    	//draw item circles
     	this.circles = this.container.selectAll('circle')
-    		.data(guests, d => d.id);
+    		.data(itemsOrdered, d => d.id);
 
+        console.log(this.circles);
     	//exit
     	this.circles.exit().remove();
 
@@ -128,14 +143,14 @@ class Bubbles extends Component {
     		.attr('fill-opacity', 0.25)
     		.attr('stroke-width', 2)
     		.merge(this.circles)
-    		.attr('r', d => amountScale(d.totalSpent)*charge)
-    		.attr('fill', d => colorScale(amountScale(d.totalSpent)))
-    		.attr('stroke', d => colorScale(amountScale(d.totalSpent)))
+    		.attr('r', 50)
+    		.attr('fill', d => colorScale(priceScale(d.price)))
+    		.attr('stroke', d => colorScale(priceScale(d.price)))
     		.on('mouseover', d => this.mouseOver(d))
-    		.on('mouseleave', d => this.mouseLeave(d))
-    		.on('click', d => this.mouseClick(d));
+    		.on('mouseleave', d => this.mouseLeave(d));
+    		//.on('click', d => this.mouseClick(d));
 
-    	//console.log(this.circles);
+        console.log(this.circles);
     }
 
     mouseOver(d) {
@@ -152,14 +167,17 @@ class Bubbles extends Component {
     	}
 
     	this.hover.style('display', 'block');
+        /*
     	if(groupByVisits){
     		//puts tooltip right below center of bubble
     		this.hover.attr('transform', 'translate(' + [d.x, 60] + ')');
     	}else{
     		this.hover.attr('transform', 'translate(' + [d.x, 425] + ')');
     	}
+        */
+        this.hover.attr('transform', 'translate(' + [d.x, 60] + ')');
     	this.hover.select('text')
-    		.text(capitalize(d.firstName) + " " + capitalize(d.lastName) + " - $" + d.totalSpent.toFixed(2));
+    		.text(capitalize(d.name) +  " - $" + d.price.toFixed(2));
     	var width = this.hover.select('text').node().getBoundingClientRect().width;
    	 	this.hover.select('rect')
       		.attr('width', width + 6)
@@ -173,19 +191,23 @@ class Bubbles extends Component {
     			return p;
     		}
     	})
-    	currCircle.attr('stroke', colorScale(amountScale(d.totalSpent)))
+    	currCircle.attr('stroke', colorScale(priceScale(d.price)))
     		.attr('stroke-width', 2);
 
     	this.hover.style('display', 'none')
     }
-
+/*
     mouseClick(d) {
     	//sets state to switch to guest view
-    	this.props.clickGuest(d.id);
-    }
+    	this.props.clickGuest();
+    	console.log(d);
+    	this.renderItemsCircles(d.id);
+    	//itemsOrdered = this.loadItemsOrdered(d.id);
+    	console.log(this.itemCircles);
 
+    }
+*/
     forceTick() {
-    	//console.log(simulation.force);
     	this.circles
     		.attr('cx', d => d.x)
     		.attr('cy', d => d.y);
@@ -194,7 +216,7 @@ class Bubbles extends Component {
 
 
 	render() {
-		if(displayGuestView)
+		if(!displayGuestView)
 			return null;
 		else
 	      	return (
@@ -204,4 +226,4 @@ class Bubbles extends Component {
 	      	);
    }
 }
-export default Bubbles;
+export default ItemBubbles;

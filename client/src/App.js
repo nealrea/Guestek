@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Bubbles from './Bubbles';
+import ItemBubbles from './ItemBubbles';
 
 /*
 class GuestFName extends Component {
@@ -170,6 +171,7 @@ class App extends Component {
       db: [],
       groupByVisits: false,
       displayGuestView: false,
+      itemsOrdered: [],
     };
   };
 
@@ -271,10 +273,28 @@ class App extends Component {
     });
   }
 
-  displayGuestView = () => {
+  displayGuestView = (guestId) => {
     this.setState({
       displayGuestView: (!this.state.displayGuestView)
     });
+    this.loadItemsOrdered(guestId);
+  }
+
+  loadItemsOrdered = (query) => {
+    return Promise.all([
+        fetch('/api/itemsOrdered/loadItemsOrdered?query=' + query)
+          .then(res => res.json()).catch(err => console.log(err)),
+        fetch('/api/items/loadItems')
+          .then(res => res.json()).catch(err => console.log(err))
+      ]).then(([itemsOrdered, allItems]) => {
+        var findItem = (id) => allItems.find(item => item.id === id);
+        itemsOrdered.forEach(itemOrdered => Object.assign(itemOrdered, findItem(itemOrdered.ItemId)));
+        console.log(allItems);
+        console.log(itemsOrdered);
+        this.setState({
+          itemsOrdered: itemsOrdered
+        });
+      });
   }
 
   render() {
@@ -294,6 +314,8 @@ class App extends Component {
         <NumVisits groupByVisits={this.state.groupByVisits} displayGuestView={this.state.displayGuestView}/>
         <Bubbles data={this.state.db} groupByVisits={this.state.groupByVisits} 
           displayGuestView={this.state.displayGuestView} clickGuest={this.displayGuestView} width="1000px" height="1000px"/>
+        <ItemBubbles data={this.state.itemsOrdered} displayGuestView={this.state.displayGuestView} 
+          width="1000px" height="1000px"/>
       </div>
     );
   }

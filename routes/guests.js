@@ -41,6 +41,8 @@ router.post('/', (req, res) => {
 		email: req.body.email.toLowerCase(),
 		totalSpent: req.body.totalSpent,
 		numVisits: req.body.numVisits,
+		lastOrderId: req.body.lastOrderId,
+		lastOrder: req.body.lastOrder,
 	}).then(res.end('posted guest!'));
 });
 
@@ -49,6 +51,8 @@ router.put('/updateGuest', (req,res) => {
 	models.Guests.update({
 		totalSpent: req.body.totalSpent,
 		numVisits: req.body.numVisits,
+		lastOrderId: req.body.lastOrderId,
+		lastOrder: req.body.lastOrder,
 	},
 	{
 		where: {

@@ -35,8 +35,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: true,
     },
-    prevOrdered: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
+    lastOrder: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
     genInfo: {
@@ -46,8 +46,53 @@ module.exports = (sequelize, DataTypes) => {
     numVisits: {
       type: DataTypes.INTEGER,
       allowNull: true,
+    },
+    lastOrderId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     }
-  }, {});
+  }, {
+    hooks: {
+      afterCreate: (guest => {
+        sequelize.models.ItemsOrdered.create({
+          GuestId: guest.id,
+          ItemId: guest.lastOrderId,
+          timesOrdered: 1,
+        })
+      }),
+      /*afterUpdate: (guest => {
+        sequelize.models.ItemsOrdered.findOne({
+          where: {
+            GuestId: guest.id,
+            ItemId: guest.lastOrderId,
+          }
+        }).then(items => {
+          if(items.length > 0){
+            var currGuest = sequelize.models.ItemsOrdered.findOne({
+                              where: {
+                                GuestId: guest.id,
+                                ItemId: guest.lastOrderId,
+                              }
+                            });
+            sequelize.models.ItemsOrdered.update({
+              timesOrdered: currGuest.timesOrdered + 1,
+            },
+            {
+              where: {
+                GuestId: guest.id,
+                ItemId: guest.lastOrderId,
+              }
+            });
+          }
+        })
+        sequelize.models.ItemsOrdered.create({
+          GuestId: guest.id,
+          ItemId: guest.lastOrderId,
+          timesOrdered: 1,
+        })
+      })*/
+    }
+  });
   Guests.associate = (models) => {
     models.Guests.hasMany(models.ItemsOrdered)
   };

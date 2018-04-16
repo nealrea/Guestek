@@ -294,6 +294,7 @@ class App extends Component {
       fetch('/api/itemsOrdered/getAllItemsOrdered').then(res => res.json()),
       fetch('/api/items/loadItems').then(res => res.json())
     ]).then(([allGuests, allItemsOrdered, allItems]) => {
+      var itemId = (allItems.find(currItem => currItem.name === item)).id;
       var guestExists = allGuests.some(guest => {
         return (guest.firstName === fname && guest.lastName === lname);
       })
@@ -316,6 +317,8 @@ class App extends Component {
             lastName: lname,
             totalSpent: totalSpent,
             numVisits: numVisits,
+            lastOrderId: itemId,
+            lastOrder: item,
           }),
         }).catch(err => console.log(err));   
       }else{ //POST
@@ -331,12 +334,14 @@ class App extends Component {
             email: email,
             totalSpent: price,
             numVisits: 1,
+            lastOrderId: itemId,
+            lastOrder: item,
           }),
         });
       }
 
       // POST / UPDATE "ItemsOrdered" table
-      updateItemsOrdered(guestExists, allGuests, allItemsOrdered, allItems);
+      //updateItemsOrdered(guestExists, allGuests, allItemsOrdered, allItems);
 
     });
     //console.log(this.state);

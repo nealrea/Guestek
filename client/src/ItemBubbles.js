@@ -162,11 +162,8 @@ class ItemBubbles extends Component {
     	currCircle.attr('stroke', 'black')
     		.attr('stroke-width', 3);
 
-    	var capitalize = name => {
-    		return name[0].toUpperCase() + name.substr(1);
-    	}
-
     	this.hover.style('display', 'block');
+        this.hover.style('text-transform', 'capitalize');
         /*
     	if(groupByVisits){
     		//puts tooltip right below center of bubble
@@ -177,7 +174,7 @@ class ItemBubbles extends Component {
         */
         this.hover.attr('transform', 'translate(' + [d.x, 60] + ')');
     	this.hover.select('text')
-    		.text(capitalize(d.name) +  " - $" + d.price.toFixed(2));
+    		.text(d.name +  " - $" + d.price.toFixed(2));
     	var width = this.hover.select('text').node().getBoundingClientRect().width;
    	 	this.hover.select('rect')
       		.attr('width', width + 6)

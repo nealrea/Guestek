@@ -60,7 +60,7 @@ router.put('/updateGuest', (req,res) => {
 			firstName: req.body.firstName,
 			lastName: req.body.lastName
 		}
-	});
+	}).then(res.end('updated guest!'));
 });
 
 module.exports = router;

@@ -230,7 +230,7 @@ class App extends Component {
   };
 
   postDB = (fname,lname,email,item) => {
-    var updateItemsOrdered = (guestExists, allGuests, allItemsOrdered, allItems) => {
+    /*var updateItemsOrdered = (guestExists, allGuests, allItemsOrdered, allItems) => {
       var itemId = (allItems.find(currItem => currItem.name === item)).id;
 
       if(guestExists){
@@ -287,7 +287,7 @@ class App extends Component {
           });
         });
       }
-    }
+    }*/
 
     Promise.all([
       fetch('/api/guests/getAllGuests').then(res => res.json()),

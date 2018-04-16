@@ -70,7 +70,6 @@ module.exports = (sequelize, DataTypes) => {
             ItemId: guest.attributes.lastOrderId,
           }
         }).then(items => {
-          //console.log('items: ', items.dataValues);
           if(items){
             sequelize.models.ItemsOrdered.findOne({
               where: {
@@ -88,6 +87,12 @@ module.exports = (sequelize, DataTypes) => {
                 }
               });
             });
+          }else{
+            sequelize.models.ItemsOrdered.create({
+              GuestId: guestId,
+              ItemId: guestLastOrderId,
+              timesOrdered: 1,
+            })
           }
         });
       })

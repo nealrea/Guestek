@@ -319,6 +319,7 @@ class App extends Component {
             numVisits: numVisits,
             lastOrderId: itemId,
             lastOrder: item,
+            id: guest.id,
           }),
         }).catch(err => console.log(err));   
       }else{ //POST

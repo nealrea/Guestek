@@ -60,37 +60,37 @@ module.exports = (sequelize, DataTypes) => {
           timesOrdered: 1,
         })
       }),
-      /*afterUpdate: (guest => {
+      afterBulkUpdate: (guest => {
+        var guestId = guest.attributes.id;
+        var guestLastOrderId = guest.attributes.lastOrderId;
+        console.log(guest.attributes.id);
         sequelize.models.ItemsOrdered.findOne({
           where: {
-            GuestId: guest.id,
-            ItemId: guest.lastOrderId,
+            GuestId: guest.attributes.id,
+            ItemId: guest.attributes.lastOrderId,
           }
         }).then(items => {
-          if(items.length > 0){
-            var currGuest = sequelize.models.ItemsOrdered.findOne({
-                              where: {
-                                GuestId: guest.id,
-                                ItemId: guest.lastOrderId,
-                              }
-                            });
-            sequelize.models.ItemsOrdered.update({
-              timesOrdered: currGuest.timesOrdered + 1,
-            },
-            {
+          //console.log('items: ', items.dataValues);
+          if(items){
+            sequelize.models.ItemsOrdered.findOne({
               where: {
-                GuestId: guest.id,
-                ItemId: guest.lastOrderId,
+                GuestId: guestId,
+                ItemId: guestLastOrderId,
               }
+            }).then(currGuest => {
+              sequelize.models.ItemsOrdered.update({
+                timesOrdered: currGuest.timesOrdered + 1,
+              },
+              {
+                where: {
+                  GuestId: guestId,
+                  ItemId: guestLastOrderId,
+                }
+              });
             });
           }
-        })
-        sequelize.models.ItemsOrdered.create({
-          GuestId: guest.id,
-          ItemId: guest.lastOrderId,
-          timesOrdered: 1,
-        })
-      })*/
+        });
+      })
     }
   });
   Guests.associate = (models) => {

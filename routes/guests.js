@@ -34,7 +34,7 @@ router.get('/getAllGuests', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-	console.log(req.body);
+	//console.log(req.body);
 	models.Guests.create({
 		firstName: req.body.firstName.toLowerCase(),
 		lastName: req.body.lastName.toLowerCase(),
@@ -47,12 +47,13 @@ router.post('/', (req, res) => {
 });
 
 router.put('/updateGuest', (req,res) => {
-	console.log(req.body);
+	//console.log(req.body);
 	models.Guests.update({
 		totalSpent: req.body.totalSpent,
 		numVisits: req.body.numVisits,
 		lastOrderId: req.body.lastOrderId,
 		lastOrder: req.body.lastOrder,
+		id: req.body.id,
 	},
 	{
 		where: {

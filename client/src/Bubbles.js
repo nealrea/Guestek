@@ -45,7 +45,7 @@ class Bubbles extends Component {
 
 	componentWillReceiveProps(nextProps) {
 		//console.log('received props');
-		console.log(nextProps);
+		//console.log(nextProps);
 		guests = nextProps.data;
 		groupByVisits = nextProps.groupByVisits;
 		displayGuestView = nextProps.displayGuestView;
@@ -76,7 +76,7 @@ class Bubbles extends Component {
     	//console.log('updated');
     	var oneCent = 0.01;
     	var maxSpent = max(guests, d => d.totalSpent);
-		amountScale.domain([0.01, maxSpent]);
+		amountScale.domain([oneCent, maxSpent]);
     	
     	this.renderCircles();
 
@@ -143,6 +143,7 @@ class Bubbles extends Component {
     		if(p === d){
     			return p;
     		}
+    		return null;
     	})
     	currCircle.attr('stroke', 'black')
     		.attr('stroke-width', 3);
@@ -154,7 +155,7 @@ class Bubbles extends Component {
     		//puts tooltip right below center of bubble
     		this.hover.attr('transform', 'translate(' + [d.x, 60] + ')');
     	}else{
-    		this.hover.attr('transform', 'translate(' + [d.x, 425] + ')');
+    		this.hover.attr('transform', 'translate(' + [d.x, 40] + ')');
     	}
     	this.hover.select('text')
     		.text(d.firstName + " " + d.lastName + " - $" + d.totalSpent.toFixed(2));
@@ -170,6 +171,7 @@ class Bubbles extends Component {
     		if(p === d){
     			return p;
     		}
+    		return null;
     	})
     	currCircle.attr('stroke', colorScale(amountScale(d.totalSpent)))
     		.attr('stroke-width', 2);

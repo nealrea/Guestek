@@ -38,14 +38,27 @@ class CreateGuest extends Component {
     this.props.onSubmit(fname,lname,email,item);
   }
 
+  createOptions = (option) => {
+    return <option>{option}</option>;
+  }
+
   render() {
     return(
       /*<GuestFName onSubmit={this.props.onSubmit}/>*/
       <form className="input_form">
-        <input ref="fname" className="input_bar" placeholder="First Name"/>
-        <input ref="lname" className="input_bar" placeholder="Last Name"/>
+        <input ref="fname" className="input_bar" placeholder="First Name" list="fnames"/>
+        <datalist id="fnames">
+          {this.props.fnames.map(this.createOptions)}
+        </datalist>
+        <input ref="lname" className="input_bar" placeholder="Last Name" list="lnames"/>
+        <datalist id="lnames">
+          {this.props.lnames.map(this.createOptions)}
+        </datalist>
         <input ref="email" className="input_bar" placeholder="Email"/>
-        <input ref="item" className="input_bar" placeholder="Item Ordered"/>
+        <input ref="item" className="input_bar" placeholder="Item Ordered" list="items"/>
+        <datalist id="items">
+          {this.props.items.map(this.createOptions)}
+        </datalist>
         <button className="submit" onClick={this.handleClick}>Submit</button>
       </form>
     );
@@ -172,11 +185,19 @@ class App extends Component {
       groupByVisits: false,
       displayGuestView: false,
       itemsOrdered: [],
+      allItems: [],
+      allFnames: [],
+      allLnames: [],
     };
   };
 
-  componentDidMount() {
+  componentWillMount() {
+    this.loadAllItems();
     this.loadDB();
+  };
+
+  componentDidMount() {
+
   };
 
   loadDB = () => {
@@ -187,8 +208,13 @@ class App extends Component {
         for(var i = 0; i < allGuests.length; i++){
           guests.push(allGuests[i]);
         }
+        var fnames = guests.map(guest => guest.firstName);
+        var lnames = guests.map(guest => guest.lastName);
+        lnames = [...new Set(lnames)];
         this.setState({
           db: guests,
+          allFnames: fnames,
+          allLnames: lnames,
         });
         console.log(this.state);
       });
@@ -391,12 +417,30 @@ class App extends Component {
       ]).then(([itemsOrdered, allItems]) => {
         var findItem = (id) => allItems.find(item => item.id === id);
         itemsOrdered.forEach(itemOrdered => Object.assign(itemOrdered, findItem(itemOrdered.ItemId)));
-        console.log(allItems);
-        console.log(itemsOrdered);
+        //console.log(allItems);
+        //console.log(itemsOrdered);
         this.setState({
           itemsOrdered: itemsOrdered
         });
       });
+  }
+
+  loadAllItems = () => {
+    fetch('/api/items/loadItems').then(res => res.json()).then(allItems => {
+      var items = allItems.map(item => item.name);
+      this.setState({
+        allItems: items
+      });
+    });
+  }
+
+  loadAllNames = () => {
+    var fnames = this.state.db.map(guest => guest.firstName);
+    var lnames = this.state.db.map(guest => guest.lastName);
+    this.setState({
+      allFnames: fnames,
+      allLnames: lnames
+    });
   }
 
   render() {
@@ -405,9 +449,10 @@ class App extends Component {
         <header className="App-header">
           <Searchbar className="Searchbar" onChange={this.onSearch}/>
           <h1 className="App-title">G U E S T E K</h1>
-          <button className="create" onClick={() => this.openModal()}>Create Guest</button>
+          <button className="create" onClick={() => this.openModal()}>Create/Update Guest</button>
           <Modal isOpen={this.state.isModalOpen} onClose={() => this.closeModal()}>
-            <CreateGuest className="Form" onSubmit={this.onCreate}/>
+            <CreateGuest className="Form" onSubmit={this.onCreate} items={this.state.allItems} 
+              fnames={this.state.allFnames} lnames={this.state.allLnames}/>
           </Modal>
         </header>
         {/*<Results results={this.state.searchResults}/>*/}

@@ -45,8 +45,8 @@ class ItemBubbles extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-		console.log('received props');
-		console.log(nextProps);
+		//console.log('received props');
+		//console.log(nextProps);
 		itemsOrdered = nextProps.data;
 		displayGuestView = nextProps.displayGuestView;
 	};
@@ -129,12 +129,11 @@ class ItemBubbles extends Component {
     }
 */
     renderCircles() {
-        console.log(itemsOrdered);
+        //console.log(itemsOrdered);
     	//draw item circles
     	this.circles = this.container.selectAll('circle')
     		.data(itemsOrdered, d => d.id);
 
-        console.log(this.circles);
     	//exit
     	this.circles.exit().remove();
 
@@ -150,7 +149,6 @@ class ItemBubbles extends Component {
     		.on('mouseleave', d => this.mouseLeave(d));
     		//.on('click', d => this.mouseClick(d));
 
-        console.log(this.circles);
     }
 
     mouseOver(d) {
@@ -158,6 +156,7 @@ class ItemBubbles extends Component {
     		if(p === d){
     			return p;
     		}
+            return null;
     	})
     	currCircle.attr('stroke', 'black')
     		.attr('stroke-width', 3);
@@ -174,7 +173,7 @@ class ItemBubbles extends Component {
         */
         this.hover.attr('transform', 'translate(' + [d.x, 60] + ')');
     	this.hover.select('text')
-    		.text(d.name +  " - $" + d.price.toFixed(2));
+    		.text(d.name +  " - $" + d.price.toFixed(2) + " - Ordered " + d.timesOrdered + " times");
     	var width = this.hover.select('text').node().getBoundingClientRect().width;
    	 	this.hover.select('rect')
       		.attr('width', width + 6)
@@ -187,6 +186,7 @@ class ItemBubbles extends Component {
     		if(p === d){
     			return p;
     		}
+            return null;
     	})
     	currCircle.attr('stroke', colorScale(priceScale(d.price)))
     		.attr('stroke-width', 2);

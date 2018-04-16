@@ -29,7 +29,7 @@ var ttFontSize = 20;
 var xScale = scaleBand().domain([0,1,2,3])
 	.range([0,800])
 	.rangeRound([0,width])
-	.paddingOuter(0.03);
+	.paddingOuter(0.07);
 var colorScale = chroma.scale(['0EEF00','00095F']);
 var amountScale = scaleSqrt();
 var charge = 125;

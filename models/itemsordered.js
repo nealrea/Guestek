@@ -12,6 +12,6 @@ module.exports = (sequelize, DataTypes) => {
     ItemsOrdered.belongsTo(models.Guests);
     ItemsOrdered.belongsTo(models.Items);
   };
-  sequelize.sync();
+  //sequelize.sync();
   return ItemsOrdered;
 };

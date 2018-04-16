@@ -31,9 +31,9 @@ var xScale = scaleBand().domain([0,1,2,3])
 	.rangeRound([0,width])
 	.paddingOuter(0.03);
 var colorScale = chroma.scale(['0EEF00','00095F']);
-var priceScale = scaleLinear();
-var frequencyScale = scalePow();
-var charge = 125;
+var priceScale = scaleLog();
+var frequencyScale = scaleLog();
+var charge = 75;
 var simulation = forceSimulation()
 	.stop();
 
@@ -84,7 +84,7 @@ class ItemBubbles extends Component {
         var priceRange = extent(itemsOrdered, d => d.price);
     	var maxFrequency = max(itemsOrdered, d => d.timesOrdered);
         priceScale.domain(priceRange)
-		frequencyScale.domain([1, maxFrequency]);
+		frequencyScale.domain([1, 1000]);
     	
     	this.renderCircles();
 
@@ -101,7 +101,7 @@ class ItemBubbles extends Component {
 			guest.focusX = xScale(xDom);
 		}) */
 
-		simulation.force('collide', forceCollide(50).strength(0.5));
+		simulation.force('collide', forceCollide(d => frequencyScale(d.timesOrdered) * charge).strength(0.5));
 		simulation.force('center', forceCenter(width / 2, height / 2));
     	simulation.nodes(itemsOrdered).alpha(0.9).restart();
 
@@ -143,7 +143,7 @@ class ItemBubbles extends Component {
     		.attr('fill-opacity', 0.25)
     		.attr('stroke-width', 2)
     		.merge(this.circles)
-    		.attr('r', 50)
+    		.attr('r', d => frequencyScale(d.timesOrdered)*charge)
     		.attr('fill', d => colorScale(priceScale(d.price)))
     		.attr('stroke', d => colorScale(priceScale(d.price)))
     		.on('mouseover', d => this.mouseOver(d))

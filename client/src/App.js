@@ -29,13 +29,13 @@ class CreateGuest extends Component {
     var fname;
     var lname;
     var email;
-    var totalSpent;
+    var item;
     e.preventDefault();
     fname = this.refs.fname.value;
     lname = this.refs.lname.value;
     email = this.refs.email.value;
-    totalSpent = this.refs.totalSpent.value;
-    this.props.onSubmit(fname,lname,email,totalSpent);
+    item = this.refs.item.value;
+    this.props.onSubmit(fname,lname,email,item);
   }
 
   render() {
@@ -45,7 +45,7 @@ class CreateGuest extends Component {
         <input ref="fname" className="input_bar" placeholder="First Name"/>
         <input ref="lname" className="input_bar" placeholder="Last Name"/>
         <input ref="email" className="input_bar" placeholder="Email"/>
-        <input ref="totalSpent" className="input_bar" placeholder="Total Spent"/>
+        <input ref="item" className="input_bar" placeholder="Item Ordered"/>
         <button className="submit" onClick={this.handleClick}>Submit</button>
       </form>
     );
@@ -180,7 +180,7 @@ class App extends Component {
   };
 
   loadDB = () => {
-    fetch('/api/guests/loadDB')
+    fetch('/api/guests/getAllGuests')
       .then(res => res.json())
       .then(allGuests => {
         var guests = [];
@@ -229,19 +229,115 @@ class App extends Component {
     console.log(this.state);
   };
 
-  postDB = (fname,lname,email,totalSpent) => {
-    fetch('/api/guests', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        firstName: fname,
-        lastName: lname,
-        email: email,
-        totalSpent: totalSpent,
-      }),
+  postDB = (fname,lname,email,item) => {
+    var updateItemsOrdered = (guestExists, allGuests, allItemsOrdered, allItems) => {
+      var itemId = (allItems.find(currItem => currItem.name === item)).id;
+
+      if(guestExists){
+        var guest = allGuests.find(guest => (guest.firstName === fname && guest.lastName === lname));
+        var guestHasOrderedItem = allItemsOrdered.some(currItem => {
+          return (currItem.GuestId === guest.id && currItem.ItemId === itemId);
+        });
+        console.log(guestHasOrderedItem, itemId);
+        if(guestHasOrderedItem){
+          var currItem = allItemsOrdered.find(currItem => currItem.GuestId === guest.id && currItem.ItemId === itemId);
+          var timesOrdered = currItem.timesOrdered + 1;
+          fetch('/api/itemsOrdered/updateItemsOrdered', {
+            method: 'PUT',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              GuestId: guest.id,
+              ItemId: itemId,
+              timesOrdered: timesOrdered,
+            }),
+          }).catch(err => console.log(err));
+        }else{
+          fetch('/api/itemsOrdered/postItemOrdered', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              GuestId: guest.id,
+              ItemId: itemId,
+              timesOrdered: 1,
+            }),
+          });
+        }
+      }else{
+        Promise.all([
+          fetch(`/api/guests/findGuest?firstName=${encodeURIComponent(fname)}&lastName=${encodeURIComponent(lname)}`).then(res => res.json())
+        ]).then((currGuest) => {
+          console.log(currGuest);
+          fetch('/api/itemsOrdered/postItemOrdered', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              GuestId: currGuest.id,
+              ItemId: itemId,
+              timesOrdered: 1,
+            }),
+          });
+        });
+      }
+    }
+
+    Promise.all([
+      fetch('/api/guests/getAllGuests').then(res => res.json()),
+      fetch('/api/itemsOrdered/getAllItemsOrdered').then(res => res.json()),
+      fetch('/api/items/loadItems').then(res => res.json())
+    ]).then(([allGuests, allItemsOrdered, allItems]) => {
+      var guestExists = allGuests.some(guest => {
+        return (guest.firstName === fname && guest.lastName === lname);
+      })
+      var price = (allItems.find(currItem => currItem.name === item)).price;
+      console.log(price, guestExists, allGuests);
+      // POST / UPDATE to "Guests" table
+      if(guestExists){ //UPDATE
+        var guest = allGuests.find(guest => (guest.firstName === fname && guest.lastName === lname));
+        var totalSpent = guest.totalSpent + price;
+        var numVisits = guest.numVisits + 1;
+        console.log(totalSpent);
+        fetch('/api/guests/updateGuest', {
+          method: 'PUT',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: fname,
+            lastName: lname,
+            totalSpent: totalSpent,
+            numVisits: numVisits,
+          }),
+        }).catch(err => console.log(err));   
+      }else{ //POST
+        fetch('/api/guests', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: fname,
+            lastName: lname,
+            email: email,
+            totalSpent: price,
+            numVisits: 1,
+          }),
+        });
+      }
+
+      // POST / UPDATE "ItemsOrdered" table
+      updateItemsOrdered(guestExists, allGuests, allItemsOrdered, allItems);
+
     });
     //console.log(this.state);
   };
@@ -253,17 +349,17 @@ class App extends Component {
     this.searchDB(name);
   };
 
-  onCreate = (fname,lname,email,totalSpent) => {
+  onCreate = (fname,lname,email,item) => {
     this.setState({
       fName: fname,
       lName: lname,
       email: email,
-      totalSpent: totalSpent,
+      //totalSpent: totalSpent,
       isModalOpen: false,
     }, () => {
       console.log(this.state);
     });
-    this.postDB(fname,lname,email,totalSpent);
+    this.postDB(fname,lname,email,item);
     
   }
 
